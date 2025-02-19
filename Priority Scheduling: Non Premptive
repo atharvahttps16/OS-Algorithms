@@ -1,5 +1,5 @@
-print("Code for Non Pre-Emptive type Priority Scheduling")
-print("Code By Atharva Naik")
+print("Code for Non Pre-Emptive Type Priority Scheduling (Higher Value = Higher Priority)")
+print("Code By Atharva Naik-K042")
 
 # Class representing a process with its attributes
 class Process:
@@ -14,20 +14,24 @@ class Process:
 
 # Function implementing Non-Preemptive Priority Scheduling
 def non_preemptive_priority_scheduling(processes):
-    # Sorting processes based on arrival time and priority
-    processes.sort(key=lambda x: (x.at, x.pr))
+    # Sorting processes based on arrival time and priority (Higher number = Higher priority)
+    processes.sort(key=lambda x: (x.at, -x.pr))  # Notice the negative sign for priority
+
+    # To change to "Lower number = Higher priority", modify the sorting line:
+    # processes.sort(key=lambda x: (x.at, x.pr))  # Remove the negative sign from priority sorting
+
     n = len(processes)
     time = 0  # Current time counter
     completed = 0  # Number of completed processes
     ready_queue = []  # Queue to hold ready processes
     i = 0  # Index to track processes
-    
+
     # Processing until all processes are completed
     while completed < n:
         # Adding processes to ready queue if they have arrived
         while i < n and processes[i].at <= time:
             ready_queue.append(processes[i])
-            ready_queue.sort(key=lambda x: x.pr)  # Sorting based on priority
+            ready_queue.sort(key=lambda x: -x.pr)  # Sorting based on priority (Higher number = Higher priority)
             i += 1
         
         # If there are processes in the ready queue, execute the highest priority one
@@ -38,18 +42,18 @@ def non_preemptive_priority_scheduling(processes):
             completed += 1
         else:
             time += 1  # If no process is ready, increment time
-    
+
     # Calculating turnaround time (TAT) and waiting time (WT) for each process
     for p in processes:
         p.tat = p.ct - p.at  # TAT = Completion Time - Arrival Time
         p.wt = p.tat - p.bt  # WT = Turnaround Time - Burst Time
-        
+
     # Displaying results
     print()
     print("PID\tAT\tBT\tPR\tCT\tTAT\tWT")
     for p in processes:
         print(f"{p.pid}\t{p.at}\t{p.bt}\t{p.pr}\t{p.ct}\t{p.tat}\t{p.wt}")
-    
+
     # Calculating and displaying average turnaround time and waiting time
     avg_tat = sum(p.tat for p in processes) / n
     avg_wt = sum(p.wt for p in processes) / n
@@ -65,8 +69,23 @@ if __name__ == "__main__":
     for i in range(n):
         at = int(input(f"Enter Arrival Time of P{i+1}: "))
         bt = int(input(f"Enter Burst Time of P{i+1}: "))
-        pr = int(input(f"Enter Priority of P{i+1} (lower is higher priority): "))
+        pr = int(input(f"Enter Priority of P{i+1} (higher number = higher priority): "))
         processes.append(Process(i+1, at, bt, pr))
-    
+
     # Calling the scheduling function
     non_preemptive_priority_scheduling(processes)
+
+
+
+#Note
+
+#To Switch Back to "Lower Value = Higher Priority"
+#The processes were sorted with ascending priority, meaning smaller priority values were executed first.
+
+#The sorting line in the original code:        processes.sort(key=lambda x: (x.at, x.pr))  
+# Sort by arrival time first, then by priority, This means: If two processes arrive at the same time, 
+# the one with the lower priority number (e.g., priority 1) runs first.
+
+#Similarly, in the ready queue, the sorting line:
+#ready_queue.sort(key=lambda x: x.pr)  # Lower number gets higher priority
+#This ensures that the process with the lowest priority value runs first.
