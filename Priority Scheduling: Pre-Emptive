@@ -1,5 +1,5 @@
-print("Code for Pre-Emptive type Priority Scheduling")
-print("Code By Atharva Naik)
+print("Code for Pre-Emptive Type Priority Scheduling (Higher Value = Higher Priority)")
+print("Code By Atharva Naik-K042")
 
 # Class representing a process with its attributes
 class Process:
@@ -7,7 +7,7 @@ class Process:
         self.pid = pid  # Process ID
         self.at = at  # Arrival Time
         self.bt = bt  # Burst Time
-        self.pr = pr  # Priority
+        self.pr = pr  # Priority (Higher value = Higher priority)
         self.ct = 0  # Completion Time
         self.tat = 0  # Turnaround Time
         self.wt = 0  # Waiting Time
@@ -15,7 +15,10 @@ class Process:
 
 # Function implementing Preemptive Priority Scheduling
 def preemptive_priority_scheduling(processes):
-    processes.sort(key=lambda x: (x.at, x.pr))  # Sort by arrival time, then priority
+    # Sorting processes based on arrival time first, then by priority (higher value = higher priority)
+    processes.sort(key=lambda x: (x.at, -x.pr))  
+    # NOTE: The '-' sign before x.pr ensures that higher priority values are given preference
+
     n = len(processes)
     time = 0  # Current time counter
     completed = 0  # Number of completed processes
@@ -24,9 +27,10 @@ def preemptive_priority_scheduling(processes):
     
     # Processing until all processes are completed
     while completed < n:
+        # Add processes to ready queue if they have arrived
         while i < n and processes[i].at <= time:
             ready_queue.append(processes[i])
-            ready_queue.sort(key=lambda x: x.pr)  # Sorting based on priority
+            ready_queue.sort(key=lambda x: -x.pr)  # Sort by priority (higher value = higher priority)
             i += 1
         
         if ready_queue:
@@ -39,7 +43,7 @@ def preemptive_priority_scheduling(processes):
                 completed += 1
             else:
                 ready_queue.append(current)  # Reinsert if not finished
-                ready_queue.sort(key=lambda x: x.pr)  # Sort again after reinsert
+                ready_queue.sort(key=lambda x: -x.pr)  # Sort again after reinsert
         else:
             time += 1  # If no process is ready, increment time
     
@@ -69,9 +73,25 @@ if __name__ == "__main__":
     for i in range(n):
         at = int(input(f"Enter Arrival Time of P{i+1}: "))
         bt = int(input(f"Enter Burst Time of P{i+1}: "))
-        pr = int(input(f"Enter Priority of P{i+1} (lower is higher priority): "))
+        pr = int(input(f"Enter Priority of P{i+1} (higher value = higher priority): "))  # Input priority
         processes.append(Process(i+1, at, bt, pr))
     
     # Calling the scheduling function
     preemptive_priority_scheduling(processes)
 
+
+#Note
+
+
+#To Switch Back to "Lower Value = Higher Priority"
+
+# Step 01
+#In sorting operations (sort calls in the function), replace -x.pr with x.pr
+# Change this line:      ready_queue.sort(key=lambda x: -x.pr)  
+# To:     ready_queue.sort(key=lambda x: x.pr)
+
+
+# Step 02
+#In the initial sorting of processes (processes.sort(...)), change -x.pr to x.pr
+# Change this line:    processes.sort(key=lambda x: (x.at, -x.pr))
+# To:    processes.sort(key=lambda x: (x.at, x.pr))
