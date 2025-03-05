@@ -1,0 +1,54 @@
+import threading
+import time
+
+mutex = threading.Semaphore(1)  # Binary semaphore for mutual exclusion
+full = 0
+empty = 10
+x = 0
+lock = threading.Lock()
+
+def producer():
+    global full, empty, x
+    with lock:
+        if empty > 0:
+            full += 1
+            empty -= 1
+            x += 1
+            print(f"\nProducer produces item {x}")
+        else:
+            print("Buffer is full!")
+
+def consumer():
+    global full, empty, x
+    with lock:
+        if full > 0:
+            print(f"\nConsumer consumes item {x}")
+            x -= 1
+            full -= 1
+            empty += 1
+        else:
+            print("Buffer is empty!")
+
+def main():
+    while True:
+        print("\n Code By Atharva Naik-K042")
+        print("1. Press 1 for Producer")
+        print("2. Press 2 for Consumer")
+        print("3. Press 3 for Exit")
+
+        try:
+            choice = int(input("\nEnter your choice: "))
+            if choice == 1:
+                producer()
+            elif choice == 2:
+                consumer()
+            elif choice == 3:
+                print("Exiting...")
+                break
+            else:
+                print("Invalid choice! Please try again.")
+        except ValueError:
+            print("Please enter a valid integer.")
+
+if __name__ == "__main__":
+    main()
